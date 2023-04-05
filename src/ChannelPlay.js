@@ -1,4 +1,4 @@
-import { Link,useHistory} from "react-router-dom";
+import { Link,useHistory,useParams} from "react-router-dom";
 import { useEffect, useState,React } from "react";
 
 import axios from 'axios';
@@ -8,19 +8,19 @@ import axios from 'axios';
 import { authService } from "./fbase";
 
 
-function Home(){
-
+function ChannelPlaylist(){
 
   const API_KEY = process.env.REACT_APP_YOUTUBE_KEY;
+  let { id } = useParams();
   const [playlist, setPlaylist] = useState([]);
 
   useEffect(() => {
     axios
       .get(
-        `https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=UCY3jpJxcRPZtiR5gEthdO2g&maxResults=50&key=${API_KEY}`
+        `https://www.googleapis.com/youtube/v3/playlists?part=snippet&channelId=${id}&maxResults=50&key=${API_KEY}`
       )
       .then((res) => {
-    
+      
         setPlaylist(res.data.items);
       })
       .catch(() => {});
@@ -56,4 +56,4 @@ function Home(){
   );
   }
 
-export default Home;
+export default ChannelPlaylist;

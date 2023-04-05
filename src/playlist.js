@@ -1,10 +1,12 @@
  
 import { useEffect, useState } from "react";
-import { useParams} from "react-router-dom";
+import { useParams, useHistory} from "react-router-dom";
 
 import axios from 'axios';
 
 import ReactPlayer from "react-player";
+
+import { authService } from "./fbase";
 
 function Playlist(){
 
@@ -13,7 +15,7 @@ function Playlist(){
   
 
 
-
+  const API_KEY = process.env.REACT_APP_YOUTUBE_KEY;
   let { id } = useParams();
 
 let [videolist, setVideolist] = useState([]);
@@ -21,11 +23,10 @@ let [videolist, setVideolist] = useState([]);
   useEffect(() => {
     axios
       .get(
-        `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${id}&maxResults=50&key=AIzaSyB18CRLS9UbO8nAfvMSjLwsigntsM_UtCQ`
+        `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${id}&maxResults=50&key=${API_KEY}`
       )
       .then((res) => {
-        console.log(res);
-        //console.log(res.data.items);
+       
         setVideolist(res.data.items);
       })
       .catch(() => {});
@@ -41,7 +42,7 @@ let [videolist, setVideolist] = useState([]);
     });
   }
    let videoIDstring = videoID.join("");
-   //console.log(videoIDstring);
+   
 
 
 
@@ -51,20 +52,28 @@ let [videolist, setVideolist] = useState([]);
    useEffect(() => {
      axios
        .get(
-         `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics${videoIDstring}&maxResults=50&key=AIzaSyB18CRLS9UbO8nAfvMSjLwsigntsM_UtCQ`
+         `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics${videoIDstring}&maxResults=50&key=${API_KEY}`
        )
        .then((res) => {
-         console.log(res);
+       
          setVideoInfo(res.data.items);
        })
        .catch(() => {});
    }, [videolist]);
 
 
+
+   const history = useHistory();
+  const onLogOutClick = () => {
+    authService.signOut();
+    history.push("/");
+  };
+
     return(
         
       <div >
-      {videoInfo&&videoInfo.map((i, idx) => {
+        <div><button onClick={onLogOutClick}>Log Out</button> </div>
+      {videoInfo&&videoInfo.map((i) => {
           return (
            
 

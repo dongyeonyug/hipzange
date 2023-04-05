@@ -1,39 +1,34 @@
-import { BrowserRouter as  Router,Route,Link,Switch } from "react-router-dom";
+
+import AppRouter from "./Router";
+
+import {authService} from './fbase'
 import { useEffect, useState } from "react";
-
-import axios from 'axios';
-
-import Home from "./Home"
-import Playlist from "./playlist"
 
 function App() {
 
+  const [init, setInit] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    authService.onAuthStateChanged((user) => {
+      if (user) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+      setInit(true);
+    });
+  }, []);
+   
 
-
+   
   return (
-   
-
-    <Router>
-    <Switch>
-
-  
-    <Route path="/playlist/:id">
-          <Playlist/>
-        </Route>
-   
-        <Route path="/">
-          <Home/>
-          
-        </Route>
-
+    <>
+     
+      {init ? <AppRouter isLoggedIn={isLoggedIn} /> : "Initializing..."}
+     
+    </>
         
-        
-        </Switch>
-    </Router>
-      
-      
-        
-        )
+  )
 
  
 }
